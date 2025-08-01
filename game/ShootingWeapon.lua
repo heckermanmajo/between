@@ -5,7 +5,7 @@
 ShootingWeapon = {}
 ShootingWeapon.__index = ShootingWeapon
 
-function ShootingWeapon.new(weapon_kind)
+function ShootingWeapon.new(weapon_kind, from_item)
     local self = setmetatable({}, ShootingWeapon)
     self.shoot_effect_cooldown = 0
     self.shoot_cooldown = 0
@@ -13,6 +13,7 @@ function ShootingWeapon.new(weapon_kind)
     self.hit_target = nil
     self.max_range = 500
     self.kind = weapon_kind
+    self.from_item = from_item
 
     if weapon_kind == "handgun" then
         self.damage = 10
@@ -31,6 +32,8 @@ end
 function ShootingWeapon:handle_attack(dt)
 
     if Player.weapon_in_hand == nil then return end
+    local shift_is_pressed = love.keyboard.isDown("lshift")
+    if shift_is_pressed then return end
 
     if self.shoot_effect_cooldown > 0 then self.shoot_effect_cooldown = self.shoot_effect_cooldown - dt end
     if self.shoot_cooldown > 0 then self.shoot_cooldown = self.shoot_cooldown - dt end
@@ -105,7 +108,21 @@ function ShootingWeapon:draw()
         love.graphics.translate(Player.x, Player.y)
         love.graphics.rotate(Player.rotation + math.pi / 2)  -- Rotate the player
         love.graphics.setColor(1, 1, 1)  -- Set color to white (default)
-        love.graphics.draw(Textures.handgun, -Textures.player:getWidth() / 2 + 20, -Textures.player:getHeight() / 2 - 7)  -- Draw the player centered
+        local shift_is_pressed = love.keyboard.isDown("lshift")
+        local scale = 1
+        local scale_one = 1
+        local scale_two = 1
+        local x = -Textures.player:getWidth() / 2 + 20
+        local y = -Textures.player:getHeight() / 2 - 7
+        local degrees = 0
+        if shift_is_pressed then
+            degrees = -90
+            x = -Textures.player:getHeight() / 2 + 20
+            y = -Textures.player:getWidth() / 2 + 16
+            -- scale_one = -scale
+        end
+        love.graphics.rotate(math.rad(degrees))
+        love.graphics.draw(Textures.handgun,x ,y, 0, scale_one, scale_two)
 
         if self.shoot_effect_cooldown > 0 then
             love.graphics.draw(Textures.shooting_fire, -Textures.player:getWidth() / 2 + 20, -Textures.player:getHeight() / 2 - 20)  -- Draw the player centered
@@ -118,7 +135,6 @@ function ShootingWeapon:draw()
             love.graphics.setColor(1, 1, 1)  -- Set color to white (default)
             local texture = Textures.hit
             local scale = 0.3
-
             local x = self.hit_target.x - texture:getWidth() / 2 * scale + 3
             local y = self.hit_target.y - texture:getHeight() / 2 * scale + 3
             love.graphics.draw(texture, x, y, 0, scale, scale)

@@ -16,6 +16,7 @@
 --- @field current_level Level The current level
 Level = {
     TILE_SIZE = 64,
+    CURRENT = nil -- TODO: USE THIS INSTEAD OF LEVEL and Player.current_level
 }
 Level.__index = Level
 
@@ -47,7 +48,7 @@ function Level.new(size_in_tiles, max_rooms, room_min_size, room_max_size)
     self.WORLD_X_TILES = size_in_tiles
     self.WORLD_Y_TILES = size_in_tiles
 
-    local max = 9999999999  -- php's randmax on windows
+    local max = 9999999999
     self.id = math.random(0, max) .. "_this"
     self.my_path = "game/savegame/" .. self.id
     self.raw_maze = Maze.generate_a_maze(size_in_tiles, size_in_tiles, max_rooms, room_min_size, room_max_size)
@@ -164,7 +165,6 @@ function Level.new(size_in_tiles, max_rooms, room_min_size, room_max_size)
     self.monsters = {}
     self.items = {}
 
-    -- create 3 monsters
     Monster.new(nil, nil, self)
     Monster.new(nil, nil, self)
     Monster.new(nil, nil, self)

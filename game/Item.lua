@@ -104,9 +104,9 @@ function Item:draw_as_inventory_item(x_pos, y_pos, amount)
     love.graphics.print(amount, x_pos + 128 - 20, y_pos + 128 - 25)
     local mouse_x, mouse_y = love.mouse.getPosition()
     if mouse_x > x_pos and mouse_x < x_pos + 128 and mouse_y > y_pos and mouse_y < y_pos + 128 then
-      if love.mouse.isDown(1) then
-        currently_selected_item = self
-      end
+        if love.mouse.isDown(1) then
+            currently_selected_item = self
+        end
     end
 
     if currently_selected_item == self then
@@ -191,7 +191,7 @@ function Item:draw_interaction_buttons()
         end
 
         do
-          -- todo: add drop button for can
+            -- todo: add drop button for can
 
         end
 
@@ -210,158 +210,161 @@ function Item:draw_interaction_buttons()
         love.graphics.print("Equip Weapon", x_pos + 10, y_pos + 10)
         local mouse_x, mouse_y = love.mouse.getPosition()
         if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
-          if love.mouse.isDown(1) and cooldown <= 0 then
-            -- equip the item
-            Player.weapon_in_hand = ShootingWeapon.new("handgun")
-            -- dont remove the item from the inventory, just equip it
-            print("Equipped the handgun...")
-            cooldown = 0.5
-          end
+            if love.mouse.isDown(1) and cooldown <= 0 then
+                -- equip the item
+                Player.weapon_in_hand = ShootingWeapon.new("handgun", self)
+                -- dont remove the item from the inventory, just equip it
+                print("Equipped the handgun...")
+                cooldown = 0.5
+            end
         end
 
         -- create a drop button
         do
-          local x_pos = 200
-          local y_pos = 350
-          local width = 200
-          local height = 50
-          love.graphics.setColor(0.3, 0.3, 0.3)
-          love.graphics.rectangle("fill", x_pos, y_pos, width, height)
-          love.graphics.setColor(1, 1, 1)
+            local x_pos = 200
+            local y_pos = 350
+            local width = 200
+            local height = 50
+            love.graphics.setColor(0.3, 0.3, 0.3)
+            love.graphics.rectangle("fill", x_pos, y_pos, width, height)
+            love.graphics.setColor(1, 1, 1)
 
-          love.graphics.print("Drop Weapon", x_pos + 10, y_pos + 10)
+            love.graphics.print("Drop Weapon", x_pos + 10, y_pos + 10)
 
-          local mouse_x, mouse_y = love.mouse.getPosition()
-          if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
-            if love.mouse.isDown(1) and cooldown <= 0 then
-              -- drop the item
-              self:add_to_level(Player.x, Player.y, Player.current_level)
-              -- remove the item from the inventory
-              for i, item_row in ipairs(Player.inventory) do
-                if item_row[1].kind == self.kind then
-                  table.remove(Player.inventory, i)
-                  break
+            local mouse_x, mouse_y = love.mouse.getPosition()
+            if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
+                if love.mouse.isDown(1) and cooldown <= 0 then
+                    -- drop the item
+                    self:add_to_level(Player.x, Player.y, Player.current_level)
+                    -- remove the item from the inventory
+                    for i, item_row in ipairs(Player.inventory) do
+                        if item_row[1].kind == self.kind then
+                            table.remove(Player.inventory, i)
+                            if Player.weapon_in_hand.kind == "handgun" then Player.weapon_in_hand = nil end
+                            break
+                        end
+                    end
+                    print("Dropped the handgun...")
+                    cooldown = 0.5
                 end
-              end
-              print("Dropped the handgun...")
-              cooldown = 0.5
             end
-          end
         end
 
     end
 
     if self.kind == "shotgun" then
-      -- draw the "equip" button
-      local x_pos = 200
-      local y_pos = 250
-      local width = 200
-      local height = 50
-      love.graphics.setColor(0.3, 0.3, 0.3)
-      love.graphics.rectangle("fill", x_pos, y_pos, width, height)
-      love.graphics.setColor(1, 1, 1)
-
-      love.graphics.print("Equip Weapon", x_pos + 10, y_pos + 10)
-      local mouse_x, mouse_y = love.mouse.getPosition()
-      if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
-        if love.mouse.isDown(1) and cooldown <= 0 then
-          -- equip the item
-          Player.weapon_in_hand = ShootingWeapon.new("shotgun")
-          -- dont remove the item from the inventory, just equip it
-          print("Equipped the handgun...")
-          cooldown = 0.5
-        end
-      end
-
-      -- create a drop button
-      do
+        -- draw the "equip" button
         local x_pos = 200
-        local y_pos = 350
+        local y_pos = 250
         local width = 200
         local height = 50
         love.graphics.setColor(0.3, 0.3, 0.3)
         love.graphics.rectangle("fill", x_pos, y_pos, width, height)
         love.graphics.setColor(1, 1, 1)
 
-        love.graphics.print("Drop Weapon", x_pos + 10, y_pos + 10)
-
+        love.graphics.print("Equip Weapon", x_pos + 10, y_pos + 10)
         local mouse_x, mouse_y = love.mouse.getPosition()
         if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
-          if love.mouse.isDown(1) and cooldown <= 0 then
-            -- drop the item
-            self:add_to_level(Player.x, Player.y, Player.current_level)
-            -- remove the item from the inventory
-            for i, item_row in ipairs(Player.inventory) do
-              if item_row[1].kind == self.kind then
-                table.remove(Player.inventory, i)
-                break
-              end
+            if love.mouse.isDown(1) and cooldown <= 0 then
+                -- equip the item
+                Player.weapon_in_hand = ShootingWeapon.new("shotgun", self)
+                -- dont remove the item from the inventory, just equip it
+                print("Equipped the handgun...")
+                cooldown = 0.5
             end
-            print("Dropped the shotgun...")
-            cooldown = 0.5
-          end
         end
-      end
+
+        -- create a drop button
+        do
+            local x_pos = 200
+            local y_pos = 350
+            local width = 200
+            local height = 50
+            love.graphics.setColor(0.3, 0.3, 0.3)
+            love.graphics.rectangle("fill", x_pos, y_pos, width, height)
+            love.graphics.setColor(1, 1, 1)
+
+            love.graphics.print("Drop Weapon", x_pos + 10, y_pos + 10)
+
+            local mouse_x, mouse_y = love.mouse.getPosition()
+            if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
+                if love.mouse.isDown(1) and cooldown <= 0 then
+                    -- drop the item
+                    self:add_to_level(Player.x, Player.y, Player.current_level)
+                    -- remove the item from the inventory
+                    for i, item_row in ipairs(Player.inventory) do
+                        if item_row[1].kind == self.kind then
+                            table.remove(Player.inventory, i)
+                            if Player.weapon_in_hand.kind == "shotgun" then Player.weapon_in_hand = nil end
+                            break
+                        end
+                    end
+                    print("Dropped the shotgun...")
+                    cooldown = 0.5
+                end
+            end
+        end
 
     end
 
-      if self.kind == "mp5" then
-      -- draw the "equip" button
-      local x_pos = 200
-      local y_pos = 250
-      local width = 200
-      local height = 50
-      love.graphics.setColor(0.3, 0.3, 0.3)
-      love.graphics.rectangle("fill", x_pos, y_pos, width, height)
-      love.graphics.setColor(1, 1, 1)
-
-      love.graphics.print("Equip Weapon", x_pos + 10, y_pos + 10)
-      local mouse_x, mouse_y = love.mouse.getPosition()
-      if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
-        if love.mouse.isDown(1) and cooldown <= 0 then
-          -- equip the item
-          Player.weapon_in_hand = ShootingWeapon.new("mp5")
-          -- dont remove the item from the inventory, just equip it
-          print("Equipped the handgun...")
-          cooldown = 0.5
-        end
-      end
-
-      -- create a drop button
-      do
+    if self.kind == "mp5" then
+        -- draw the "equip" button
         local x_pos = 200
-        local y_pos = 350
+        local y_pos = 250
         local width = 200
         local height = 50
         love.graphics.setColor(0.3, 0.3, 0.3)
         love.graphics.rectangle("fill", x_pos, y_pos, width, height)
         love.graphics.setColor(1, 1, 1)
 
-        love.graphics.print("Drop Weapon", x_pos + 10, y_pos + 10)
-
+        love.graphics.print("Equip Weapon", x_pos + 10, y_pos + 10)
         local mouse_x, mouse_y = love.mouse.getPosition()
         if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
-          if love.mouse.isDown(1) and cooldown <= 0 then
-            -- drop the item
-            self:add_to_level(Player.x, Player.y, Player.current_level)
-            -- remove the item from the inventory
-            for i, item_row in ipairs(Player.inventory) do
-              if item_row[1].kind == self.kind then
-                table.remove(Player.inventory, i)
-                break
-              end
+            if love.mouse.isDown(1) and cooldown <= 0 then
+                -- equip the item
+                Player.weapon_in_hand = ShootingWeapon.new("mp5", self)
+                -- dont remove the item from the inventory, just equip it
+                print("Equipped the handgun...")
+                cooldown = 0.5
             end
-            print("Dropped the shotgun...")
-            cooldown = 0.5
-          end
         end
-      end
+
+        -- create a drop button
+        do
+            local x_pos = 200
+            local y_pos = 350
+            local width = 200
+            local height = 50
+            love.graphics.setColor(0.3, 0.3, 0.3)
+            love.graphics.rectangle("fill", x_pos, y_pos, width, height)
+            love.graphics.setColor(1, 1, 1)
+
+            love.graphics.print("Drop Weapon", x_pos + 10, y_pos + 10)
+
+            local mouse_x, mouse_y = love.mouse.getPosition()
+            if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
+                if love.mouse.isDown(1) and cooldown <= 0 then
+                    -- drop the item
+                    self:add_to_level(Player.x, Player.y, Player.current_level)
+                    -- remove the item from the inventory
+                    for i, item_row in ipairs(Player.inventory) do
+                        if item_row[1].kind == self.kind then
+                            table.remove(Player.inventory, i)
+                            if Player.weapon_in_hand.kind == "mp5" then Player.weapon_in_hand = nil end
+                            break
+                        end
+                    end
+                    print("Dropped the shotgun...")
+                    cooldown = 0.5
+                end
+            end
+        end
 
     end
 
     if kind == "ammo_9mm" then
 
-      -- todo: drpo button for ammo: CAREFUL WITH AMOUNT OF AMMO IN THE STACK
+        -- todo: drpo button for ammo: CAREFUL WITH AMOUNT OF AMMO IN THE STACK
 
     end
 
@@ -369,18 +372,18 @@ function Item:draw_interaction_buttons()
 end
 
 function Item:remove_from_level()
-  for i, item in ipairs(Player.current_level.items) do
-    if item == self then
-      table.remove(Player.current_level.items, i)
-      return
+    for i, item in ipairs(Player.current_level.items) do
+        if item == self then
+            table.remove(Player.current_level.items, i)
+            return
+        end
     end
-  end
 end
 
 function Item:add_to_level(x, y, level)
-  self.x = x
-  self.y = y
-  table.insert(level.items, self)
+    self.x = x
+    self.y = y
+    table.insert(level.items, self)
 end
 
 ------------------------------------------------------------------------------
@@ -392,63 +395,63 @@ end
 --- The item will be removed from the level after being added to the inventory.
 function Item:add_to_player_inventory()
 
-  --- Helper function to handle adding ammo to inventory
-  --- @param stack table
-  --- @param ammo_count number
-  --- @return number
-  local function add_ammo_to_stack(stack, ammo_count)
-    while ammo_count > 0 do
-      if #stack >= Item.MAX_STACK_SIZE_PER_KIND[self.kind] then
-        break -- Exit if stack is full
-      end
-      table.insert(stack, self)
-      ammo_count = ammo_count - 1
-    end
-    return ammo_count
-  end
-
-  print("Item:add_to_player_inventory")
-
-  -- Check if the item is ammo and generate random count
-  local ammo_count = self.amount
-
-  -- Try to add the item to an existing stack
-  for _, inventory_stack in ipairs(Player.inventory) do
-    if inventory_stack[1].kind == self.kind then
-      local is_full = #inventory_stack >= Item.MAX_STACK_SIZE_PER_KIND[self.kind]
-
-      if not is_full then
-        if self.kind == "ammo_9mm" or self.kind == "ammo_10mm" or self.kind == "ammo_12mm" then
-          ammo_count = add_ammo_to_stack(inventory_stack, ammo_count)
-          -- if not all ammo was added to the stack, try to add it to another stack
-          if ammo_count > 0 then goto continue end
-        else
-          table.insert(inventory_stack, self)
+    --- Helper function to handle adding ammo to inventory
+    --- @param stack table
+    --- @param ammo_count number
+    --- @return number
+    local function add_ammo_to_stack(stack, ammo_count)
+        while ammo_count > 0 do
+            if #stack >= Item.MAX_STACK_SIZE_PER_KIND[self.kind] then
+                break -- Exit if stack is full
+            end
+            table.insert(stack, self)
+            ammo_count = ammo_count - 1
         end
+        return ammo_count
+    end
+
+    print("Item:add_to_player_inventory")
+
+    -- Check if the item is ammo and generate random count
+    local ammo_count = self.amount
+
+    -- Try to add the item to an existing stack
+    for _, inventory_stack in ipairs(Player.inventory) do
+        if inventory_stack[1].kind == self.kind then
+            local is_full = #inventory_stack >= Item.MAX_STACK_SIZE_PER_KIND[self.kind]
+
+            if not is_full then
+                if self.kind == "ammo_9mm" or self.kind == "ammo_10mm" or self.kind == "ammo_12mm" then
+                    ammo_count = add_ammo_to_stack(inventory_stack, ammo_count)
+                    -- if not all ammo was added to the stack, try to add it to another stack
+                    if ammo_count > 0 then goto continue end
+                else
+                    table.insert(inventory_stack, self)
+                end
+                self:remove_from_level()
+                return
+            end
+        end
+        :: continue ::
+    end
+
+    -- If item couldn't be added to an existing stack, try to create a new stack
+    if #Player.inventory < Player.max_inventory_size then
+        local new_stack = {}
+        table.insert(Player.inventory, new_stack)
+
+        if self.kind == "ammo_9mm" or self.kind == "ammo_10mm" or self.kind == "ammo_12mm" then
+            ammo_count = add_ammo_to_stack(new_stack, ammo_count)
+        else
+            table.insert(new_stack, self)
+        end
+
         self:remove_from_level()
         return
-      end
-    end
-    :: continue ::
-  end
-
-  -- If item couldn't be added to an existing stack, try to create a new stack
-  if #Player.inventory < Player.max_inventory_size then
-    local new_stack = {}
-    table.insert(Player.inventory, new_stack)
-
-    if self.kind == "ammo_9mm" or self.kind == "ammo_10mm" or self.kind == "ammo_12mm" then
-      ammo_count = add_ammo_to_stack(new_stack, ammo_count)
-    else
-      table.insert(new_stack, self)
     end
 
-    self:remove_from_level()
-    return
-  end
-
-  -- If inventory is full and item can't be added
-  print("Inventory is full")
-  -- todo: display message that inventory is full to the player
-  -- todo: we need a system for displaying text badges on the screen for some time like a label
+    -- If inventory is full and item can't be added
+    print("Inventory is full")
+    -- todo: display message that inventory is full to the player
+    -- todo: we need a system for displaying text badges on the screen for some time like a label
 end

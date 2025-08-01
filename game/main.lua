@@ -94,35 +94,15 @@ math.randomseed(os.time())
 
 DEBUG = false
 EDITOR_MODE = false
---- Here os the save game saved to. There is only one save game at a time: "Rouge-like"
-SAVE_PATH = "game/savegame"
+SAVE_PATH = "game/savegame" --- Here os the save game saved to. There is only one save game at a time: "Rouge-like"
+LEVEL = nil -- the currently active level
 
 LEVEL_TEMPLATES = {
-  {
-    name = "start_level_1",
-    file_name = "t1",
-    path = "game/level_templates/t1",
-  },
-  {
-    name = "start_level_2",
-    file_name = "t2",
-    path = "game/level_templates/t2",
-  },
-  {
-    name = "start_level_3",
-    file_name = "t3",
-    path = "game/level_templates/t3",
-  },
-    {
-    name = "start_level_4",
-    file_name = "t4",
-    path = "game/level_templates/t3",
-  },
-    {
-    name = "start_level_5",
-    file_name = "t5",
-    path = "game/level_templates/t3",
-  }
+  { name = "start_level_1", file_name = "t1", path = "game/level_templates/t1", },
+  { name = "start_level_2", file_name = "t2", path = "game/level_templates/t2", },
+  { name = "start_level_3", file_name = "t3", path = "game/level_templates/t3", },
+  { name = "start_level_4", file_name = "t4", path = "game/level_templates/t3", },
+  { name = "start_level_5", file_name = "t5", path = "game/level_templates/t3", }
 }
 
 -- todo; Create a script that we can use to generate a lot of mazes
