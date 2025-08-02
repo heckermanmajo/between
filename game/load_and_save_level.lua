@@ -25,9 +25,22 @@ function Level.from_file(level_name, load_path)
     load_path = load_path or SAVE_PATH
     local path = load_path .. "/" .. level_name
 
-    local file = io.open(path, "r")
+    local file = io.open(path, "rb")
     if not file then print("Could not read " .. path) end
-    local content = file:read("*all")
+    local content = {}
+    while true do
+        local chunk = file:read(4096)  -- or try 1024 if 4096 fails
+        if not chunk then break end
+        table.insert(content, chunk)
+    end
+    file:close()
+    content = table.concat(content)
+    print("Bytes read: " .. #content)
+    print(content)
+    print(path)
+    print("Bytes read: " .. #content)
+    local attr = assert(io.popen("stat -c %s " .. path)):read("*a")
+    print("Actual file size: " .. attr)
 
     -- split on seperators "####################################"
     local parts = split(content, CSV_SEPERATOR)
@@ -137,12 +150,8 @@ end
 function Level:save_to_file()
 
     -- overwrite the file if it exists
-
     local path = SAVE_PATH .. "/" .. self.id
-    if self.my_path then
-        --os.remove(self.my_path)
-        path = self.my_path
-    end
+    if self.my_path then path = self.my_path end
 
     local file = io.open(path, "w")
     if not file then

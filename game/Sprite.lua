@@ -1,6 +1,5 @@
 --- @class Sprite blood stains, dirt, marks like drawings, etc.
-Sprite = {
-}
+Sprite = {}
 Sprite.__index = Sprite
 
 function Sprite.new(x, y, type, rotation, scale, level)
@@ -22,7 +21,14 @@ function Sprite:draw()
     love.graphics.setColor(1, 1, 1)
     local tile = Level.current_level:get_tile_at(self.x, self.y)
     if tile.visible then
-        love.graphics.draw(self.texture, self.x - self.texture:getWidth() / 2, self.y - self.texture:getHeight() / 2, self.rotation, self.scale, self.scale)
+        love.graphics.draw(
+            self.texture,
+            self.x - self.texture:getWidth() / 2,
+            self.y - self.texture:getHeight() / 2,
+            self.rotation,
+            self.scale,
+            self.scale
+        )
     end
 end
 

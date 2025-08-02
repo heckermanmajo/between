@@ -51,6 +51,8 @@ function Menu.MainMenu()
     local background = Textures.backrooms
     love.graphics.draw(background, 0, 0)
 
+
+
     -- sale up to screen size
     local scale_x = love.graphics.getWidth() / background:getWidth()
     local scale_y = love.graphics.getHeight() / background:getHeight()
@@ -88,6 +90,16 @@ function Menu.MainMenu()
         love.event.quit()
     end)
 
+    do
+        local y = 10
+        love.graphics.print("Between: V 0.1", 10, y); y = y + 20
+        love.graphics.print("Save-Files:  "..love.filesystem.getSaveDirectory(), 10, y);y = y +  20
+        love.graphics.print("Source-Files:  "..love.filesystem.getSourceBaseDirectory(), 10, y);y = y +  20
+        local major, minor, revision, codename = love.getVersion()
+        local str = string.format("Version %d.%d.%d - %s", major, minor, revision, codename)
+        love.graphics.print("LOVE:  "..str, 10, y);y = y +  20
+        love.graphics.print("Web:  between.info", 10, y);y = y +  20
+    end
 
     -- end on escape
     if love.keyboard.isDown("escape") then love.event.quit() end

@@ -310,9 +310,9 @@ end
 function Player.place_player_on_random_tile(level)
 
     -- place the player on a random floor tile
-    local player_tile = Level.current_level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
+    local player_tile = level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
     while player_tile.kind == 0 do
-        player_tile = Level.current_level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
+        player_tile = level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
     end
     Player.x = player_tile.x
     Player.y = player_tile.y

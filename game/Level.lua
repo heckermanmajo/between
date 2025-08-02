@@ -15,10 +15,7 @@
 --- @field my_path string The path of the level
 --- @field current_level Level The current level
 ------------------------------------------------------------------------------------------------
-Level = {
-    TILE_SIZE = 64,
-    current_level = nil
-}
+Level = { TILE_SIZE = 64, current_level = nil }
 Level.__index = Level
 
 ---------------------------------------------------------------------------------------------
@@ -127,14 +124,14 @@ function Level.new(size_in_tiles, max_rooms, room_min_size, room_max_size)
     self.monsters = {}
     self.items = {}
 
-    for i = 0, 10 do Monster.new(nil, nil, self) end
-    for i = 1, 30 do Item.place_item_on_random_floor_tile("can", self) end
-    for i = 1, 20 do Item.place_item_on_random_floor_tile("ammo_9mm", self) end
-    for i = 1, 20 do Item.place_item_on_random_floor_tile("ammo_10mm", self) end
-    for i = 1, 20 do Item.place_item_on_random_floor_tile("ammo_12mm", self) end
-    for i = 1, 20 do Item.place_item_on_random_floor_tile("handgun", self) end
-    for i = 1, 20 do Item.place_item_on_random_floor_tile("shotgun", self) end
-    for i = 1, 20 do Item.place_item_on_random_floor_tile("mp5", self) end
+    for _ = 0, 10 do Monster.new(nil, nil, self) end
+    for _ = 1, 30 do Item.place_item_on_random_floor_tile("can", self) end
+    for _ = 1, 20 do Item.place_item_on_random_floor_tile("ammo_9mm", self) end
+    for _ = 1, 20 do Item.place_item_on_random_floor_tile("ammo_10mm", self) end
+    for _ = 1, 20 do Item.place_item_on_random_floor_tile("ammo_12mm", self) end
+    for _ = 1, 20 do Item.place_item_on_random_floor_tile("handgun", self) end
+    for _ = 1, 20 do Item.place_item_on_random_floor_tile("shotgun", self) end
+    for _ = 1, 20 do Item.place_item_on_random_floor_tile("mp5", self) end
     Player.place_player_on_random_tile(self) -- level is also state of the player
     return self
 end

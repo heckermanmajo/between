@@ -21,7 +21,7 @@ Door concept:
 --- @field x number
 --- @field y number
 --- @field visible boolean
---- @field doorway_to string 'unknown' | 'load_path_of_the_room' | '' empty string means no doorway
+--- @field doorway_to string 'unknown' | '<load_path_of_the_room>' | '' (empty string means no doorway)
 
 Cell = {}
 Cell.__index = Cell
@@ -86,17 +86,18 @@ function Cell:draw()
     end
 end
 
+
+---
+---
 function Cell:use_this_doorway()
-    -- dont use doorways in editor mode
-    if EDITOR_MODE then return end
+    if EDITOR_MODE then return end -- dont use doorways in editor mode
     -- todo: document in details since this is very important ...
     -- todo: if count the levels in the savegame directory: if alot increase possibility of a new
     --       door also leading back to a already created level
-    -- todo: Add red doorways that lead back to your base-level (hub)
+    -- todo: Add red doorways that lead back to your base-level (hub); also add dorrways with different clors and one special type
     local level_name = self.doorway_to
 
     if level_name == "" then
-
 
         local new_level = Level.new_level_from_templates()
         self.doorway_to = new_level.id
@@ -107,27 +108,33 @@ function Cell:use_this_doorway()
         if door then
             door.doorway_to = Level.current_level.id
             -- place player at the door
-            Player.x = door.x
-            Player.y = door.y
-            Player.cam.x = door.x
-            Player.cam.y = door.y
+            do
+                Player.x = door.x
+                Player.y = door.y
+                Player.cam.x = door.x
+                Player.cam.y = door.y
+            end
         end
-
     else
         Level.current_level:save_to_file()
+        print("Try to load level name: " .. tostring(level_name) )
         Level.current_level = Level.from_file(level_name)
+        if Level.current_level == nil then
+            print("Current level is nil for some crazy retarded reason")
+        end
         -- find the door that leads to this level (if it exists)
-        local function find_door_cell_that_leads_to_this_level()
+        local door = nil
+        do
             for _, row in ipairs(Level.current_level.maze) do
                 for _, cell in ipairs(row) do
                     if cell.doorway_to == Level.current_level.id then
-                        return cell
+                        door = cell
+                        goto found_door
                     end
                 end
             end
-            return nil
+            :: found_door ::
         end
-        local door = find_door_cell_that_leads_to_this_level()
         if door then
             Player.x = door.x
             Player.y = door.y

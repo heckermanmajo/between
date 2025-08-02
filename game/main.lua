@@ -85,6 +85,7 @@ require "Level"
 require "Cell"
 require "Player"
 require "Menu"
+require "FileFunctions"
 require "load_and_save_level"
 require "player_editor_mode"
 
@@ -150,6 +151,7 @@ Sounds = {
 ----------------------------------------------
 function love.load()
 
+    FileFunctions.initSaveFolder()
     love.graphics.setNewFont(12)
     music = love.audio.newSource("background.wav", "stream") -- the "stream" tells LÖVE to stream the file from disk, good for longer music track
     music:setVolume(1) -- 90% of ordinary volume
