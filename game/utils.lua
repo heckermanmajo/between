@@ -17,7 +17,7 @@ function bresenham_line(startTile, endTile)
 
     while true do
         -- Add current tile to the line
-        table.insert(line, Player.current_level.maze[y1][x1])
+        table.insert(line, Level.current_level.maze[y1][x1])
 
         -- Break if we reach the end tile
         if x1 == x2 and y1 == y2 then break end
@@ -70,7 +70,7 @@ end
 
 function split(string, seperator)
     local result = {}
-    for match in (string..seperator):gmatch("(.-)"..seperator) do
+    for match in (string .. seperator):gmatch("(.-)" .. seperator) do
         table.insert(result, match)
     end
     return result

@@ -1,5 +1,5 @@
 Menu = {
-  game_mode = "main_menu",
+    game_mode = "main_menu",
 }
 
 --- returns the place where the text should be drawn to be centered
@@ -62,7 +62,7 @@ function Menu.MainMenu()
     local start_y = 180
 
     Button(start_x, start_y, "Continue", 200, 50, function()
-      -- load the player data and from the player data -> we know what level to load
+        -- load the player data and from the player data -> we know what level to load
     end)
 
     local y = start_y + 60
@@ -70,7 +70,7 @@ function Menu.MainMenu()
     Button(start_x, y, "Start NEW GAME", 200, 50, function()
         -- delete the save games and then create a new one
         -- todo: delete the ld savegames...
-        LEVEL = Level.new(30, 15, 1, 4)
+        Level.new(30, 15, 1, 4)
         Menu.game_mode = "game"
     end)
 
@@ -133,21 +133,20 @@ function Menu.OpenEditorMenu()
     local start_y = 100
 
     local function t_button(n, x, y)
-        Button(x * 110, y * 110, "t"..n, 100, 100, function()
-            LEVEL = Level.from_file("t"..n, "game/level_templates")
+        Button(x * 110, y * 110, "t" .. n, 100, 100, function()
+            Level.current_level = Level.from_file("t" .. n, "game/level_templates")
             Menu.game_mode = "game"
             DEBUG = true
             EDITOR_MODE = true
             Player.cam.zoom = 0.7
         end)
     end
-    
+
     t_button(1, 0, 0)
     t_button(2, 1, 0)
     t_button(3, 2, 0)
     t_button(4, 3, 0)
     t_button(5, 4, 0)
     t_button(6, 5, 0)
-
 
 end

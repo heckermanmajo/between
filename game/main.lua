@@ -87,7 +87,6 @@ require "Player"
 require "Menu"
 
 require "load_and_save_level"
-require "load_and_save_player" -- todo
 require "player_editor_mode"
 
 math.randomseed(os.time())
@@ -95,14 +94,13 @@ math.randomseed(os.time())
 DEBUG = false
 EDITOR_MODE = false
 SAVE_PATH = "game/savegame" --- Here os the save game saved to. There is only one save game at a time: "Rouge-like"
-LEVEL = nil -- the currently active level
 
 LEVEL_TEMPLATES = {
-  { name = "start_level_1", file_name = "t1", path = "game/level_templates/t1", },
-  { name = "start_level_2", file_name = "t2", path = "game/level_templates/t2", },
-  { name = "start_level_3", file_name = "t3", path = "game/level_templates/t3", },
-  { name = "start_level_4", file_name = "t4", path = "game/level_templates/t3", },
-  { name = "start_level_5", file_name = "t5", path = "game/level_templates/t3", }
+    { name = "start_level_1", file_name = "t1", path = "game/level_templates/t1", },
+    { name = "start_level_2", file_name = "t2", path = "game/level_templates/t2", },
+    { name = "start_level_3", file_name = "t3", path = "game/level_templates/t3", },
+    { name = "start_level_4", file_name = "t4", path = "game/level_templates/t3", },
+    { name = "start_level_5", file_name = "t5", path = "game/level_templates/t3", }
 }
 
 -- todo; Create a script that we can use to generate a lot of mazes
@@ -169,31 +167,27 @@ local key_cool_down = 0.5
 --- @param dt number
 ----------------------------------------------
 function love.update(dt)
-
     if Menu.game_mode == "game" then
 
         Player.editor_mode(dt)
-
         Item.progress_cooldown(dt)
-
         key_cool_down = key_cool_down - dt
 
-        if love.keyboard.isDown("escape") then
-            love.event.quit()
-        end
+        if love.keyboard.isDown("escape") then love.event.quit() end
 
         if love.keyboard.isDown("f1") and key_cool_down <= 0 then
-            DEBUG = not DEBUG
+            DEBUG = not DEBUG;
             key_cool_down = 0.5
         end
 
         if love.keyboard.isDown("f2") and key_cool_down <= 0 then
-            Player.current_level:save_to_file()
+            Level.current_level:save_to_file()
+            Player.save_player_to_file()
             key_cool_down = 0.5
         end
 
         if love.keyboard.isDown("f3") and key_cool_down <= 0 then
-            LEVEL = Level.new(30, 15, 1, 4)
+            Level.new(30, 15, 1, 4)
             key_cool_down = 0.5
         end
 
@@ -204,7 +198,7 @@ function love.update(dt)
             key_cool_down = 0.5
         end
 
-        LEVEL:update(dt, "game")
+        Level.current_level:update(dt, "game")
 
         if Player.inventory_is_open then
             -- set the mouse cursor to the pointer
@@ -212,8 +206,6 @@ function love.update(dt)
         end
 
     end -- end if Menu.game_mode == "game"
-
-
 end
 
 ----------------------------------------------
@@ -236,7 +228,7 @@ function love.draw()
         return
     end
 
-    LEVEL:draw("game")
+    Level.current_level:draw("game")
     Player.draw_editor_mode()
 
 end

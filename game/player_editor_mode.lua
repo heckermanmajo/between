@@ -7,7 +7,6 @@ local editor_edit_type_mode = "walls"
 local cool_down = 0.5
 local current_item_to_place = "ammo_9mm"
 
-
 function Player.draw_editor_mode()
 
     if not EDITOR_MODE then return end
@@ -17,14 +16,14 @@ function Player.draw_editor_mode()
     love.graphics.print("Place mode: " .. editor_edit_type_mode, 100, 100)
 
     if editor_edit_type_mode == "items" then
-      -- draw the current_item_to_place at mouse postion in 2x scale
+        -- draw the current_item_to_place at mouse postion in 2x scale
         local texture = Textures[current_item_to_place]
         local mouse_x, mouse_y = love.mouse.getPosition()
         love.graphics.draw(texture, mouse_x - texture:getWidth() / 2, mouse_y - texture:getHeight() / 2, 0, 2, 2)
     end
 
     if editor_edit_type_mode == "monsters" then
-      -- draw the current_item_to_place at mouse postion in 2x scale
+        -- draw the current_item_to_place at mouse postion in 2x scale
         local texture = Textures.monster
         local mouse_x, mouse_y = love.mouse.getPosition()
         love.graphics.draw(texture, mouse_x - texture:getWidth() / 2, mouse_y - texture:getHeight() / 2, 0, 2, 2)
@@ -51,13 +50,12 @@ function Player.editor_mode(dt)
     local mouse_x, mouse_y = love.mouse.getPosition()
     local real_mouse_x, real_mouse_y = Player.cam:transform_screen_xy_to_world_xy(mouse_x, mouse_y)
     --- @type Cell
-    local mouse_over_tile = Player.current_level:get_tile_at(real_mouse_x, real_mouse_y)
+    local mouse_over_tile = Level.current_level:get_tile_at(real_mouse_x, real_mouse_y)
     if mouse_over_tile == nil then return end
-
 
     --- @param tile Cell
     local function clear_tile(tile)
-        local level = Player.current_level
+        local level = Level.current_level
         local item_indexes_to_delete = {}
         for index, item in ipairs(level.items) do
             local tile_item_is_on = level:get_tile_at(item.x, item.y)
@@ -89,7 +87,7 @@ function Player.editor_mode(dt)
 
     local real_mouse_x, real_mouse_y = Player.cam:transform_screen_xy_to_world_xy(mouse_x, mouse_y)
     --- @type Cell
-    local mouse_over_tile = Player.current_level:get_tile_at(real_mouse_x, real_mouse_y)
+    local mouse_over_tile = Level.current_level:get_tile_at(real_mouse_x, real_mouse_y)
     local mouse_left_click = love.mouse.isDown(1)
     local mouse_right_click = love.mouse.isDown(2)
 
@@ -128,7 +126,7 @@ function Player.editor_mode(dt)
 
         -- if enter is pressed, change the current item to place
         if love.keyboard.isDown("return") and cool_down <= 0 then
-          local items = Item.ITEM_KINDS
+            local items = Item.ITEM_KINDS
             local current_index = 1
             for i, item in ipairs(items) do
                 if item == current_item_to_place then
@@ -146,9 +144,9 @@ function Player.editor_mode(dt)
         if mouse_left_click and cool_down <= 0 then
             -- don't place items on walls
             if mouse_over_tile.kind == 0 then return end
-            local item = Item.new(real_mouse_x, real_mouse_y, current_item_to_place, Player.current_level)
+            local item = Item.new(real_mouse_x, real_mouse_y, current_item_to_place, Level.current_level)
             clear_tile(mouse_over_tile)
-            table.insert(Player.current_level.items, item)
+            table.insert(Level.current_level.items, item)
             cool_down = 0.5
         end
 
@@ -159,8 +157,8 @@ function Player.editor_mode(dt)
             -- don't place monsters on walls
             if mouse_over_tile.kind == 0 then return end
             clear_tile(mouse_over_tile)
-            local monster = Monster.new(real_mouse_x, real_mouse_y, Player.current_level)
-            table.insert(Player.current_level.monsters, monster)
+            local monster = Monster.new(real_mouse_x, real_mouse_y, Level.current_level)
+            table.insert(Level.current_level.monsters, monster)
             cool_down = 0.5
         end
 

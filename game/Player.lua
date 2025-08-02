@@ -1,4 +1,3 @@
-
 --[[
 
 Player-table needs to save the already created levels in a id-table since
@@ -23,7 +22,7 @@ Player = {
     inventory = {},
     --- @type table<number, table<number, Cell>>
     current_level = nil, -- create a new level
-    weapon_in_hand = ShootingWeapon.new("shotgun"),
+    weapon_in_hand = nil,
     max_health = 200,
     max_nutrition = 200,
     max_sanity = 200,
@@ -51,28 +50,26 @@ function Player:apply_input(dt)
 
     -- toggle inventory
     if love.keyboard.isDown("e") and key_cool_down <= 0 then
-      self.inventory_is_open = not self.inventory_is_open
-      key_cool_down = 0.3
+        self.inventory_is_open = not self.inventory_is_open
+        key_cool_down = 0.3
     end
 
     -- tooglezoom on debug
     if love.keyboard.isDown("z") and key_cool_down <= 0 and DEBUG then
-      Player.cam.zoom = 2 and 1 or 2
-      key_cool_down = 0.3
+        Player.cam.zoom = 2 and 1 or 2
+        key_cool_down = 0.3
     end
 
-    if self.inventory_is_open then
-      return
-    end
+    if self.inventory_is_open then return end
 
     -- if we press enter and stand on a doorway we should go to the level of the doorway
     if love.keyboard.isDown("return") and key_cool_down <= 0 then
 
-      --- @type Cell
-      local tile = self.current_level:get_tile_at(self.x, self.y)
-      if tile.is_doorway then tile:use_this_doorway() end
+        --- @type Cell
+        local tile = Level.current_level:get_tile_at(self.x, self.y)
+        if tile.is_doorway then tile:use_this_doorway() end
 
-      key_cool_down = 0.5
+        key_cool_down = 0.5
 
     end
 
@@ -90,43 +87,43 @@ function Player:apply_input(dt)
     local moveX, moveY = 0, 0
 
     if love.keyboard.isDown("w") then
-      -- Move towards the mouse
-      moveX, moveY = dx, dy
+        -- Move towards the mouse
+        moveX, moveY = dx, dy
     elseif love.keyboard.isDown("s") then
-      -- Move away from the mouse
-      moveX, moveY = -dx, -dy
+        -- Move away from the mouse
+        moveX, moveY = -dx, -dy
     end
 
     if love.keyboard.isDown("a") then
-      -- move left relative to the mouse
-      moveX, moveY = dy, -dx
+        -- move left relative to the mouse
+        moveX, moveY = dy, -dx
     elseif love.keyboard.isDown("d") then
-      -- move right relative to the mouse
-      moveX, moveY = -dy, dx
+        -- move right relative to the mouse
+        moveX, moveY = -dy, dx
     end
 
     -- Normalize movement to avoid faster diagonal speed
     local magnitude = math.sqrt(moveX ^ 2 + moveY ^ 2)
     if magnitude > 0 then
-      moveX = moveX / magnitude
-      moveY = moveY / magnitude
+        moveX = moveX / magnitude
+        moveY = moveY / magnitude
     end
 
     -- check if he is to close to the mouse if so he should not move
     if magnitude < 10 then
-      moveX = 0
-      moveY = 0
+        moveX = 0
+        moveY = 0
     end
 
     -- Move the player
     local speed = self.speed
     if EDITOR_MODE then
-      speed = 500
+        speed = 500
     end
 
     if love.keyboard.isDown("lshift") then
-      speed = self.sprint_speed
-      Player.stamina = Player.stamina - dt
+        speed = self.sprint_speed
+        Player.stamina = Player.stamina - dt
     end
 
     self.x = self.x + moveX * speed * dt
@@ -135,11 +132,11 @@ function Player:apply_input(dt)
     -- dont move out of the world
     if self.x < self.radius then self.x = self.radius end
     if self.y < self.radius then self.y = self.radius end
-    if self.x > self.current_level.WORLD_X_PIXELS + self.current_level.TILE_SIZE- self.radius then self.x = self.current_level.WORLD_X_PIXELS+ self.current_level.TILE_SIZE - self.radius end
-    if self.y > self.current_level.WORLD_Y_PIXELS + self.current_level.TILE_SIZE- self.radius then self.y = self.current_level.WORLD_Y_PIXELS+ self.current_level.TILE_SIZE - self.radius end
+    if self.x > Level.current_level.WORLD_X_PIXELS + Level.current_level.TILE_SIZE - self.radius then self.x = Level.current_level.WORLD_X_PIXELS + Level.current_level.TILE_SIZE - self.radius end
+    if self.y > Level.current_level.WORLD_Y_PIXELS + Level.current_level.TILE_SIZE - self.radius then self.y = Level.current_level.WORLD_Y_PIXELS + Level.current_level.TILE_SIZE - self.radius end
 
     if self.weapon_in_hand then
-      self.weapon_in_hand:handle_attack(dt)
+        self.weapon_in_hand:handle_attack(dt)
     end
 
 end
@@ -222,9 +219,9 @@ function Player.draw_ui()
         local start_x = 600
         local start_y = 100
         local current_item_index = 1
-        for row = 0 , math.floor(Player.max_inventory_size / slots_per_row) - 1 do
+        for row = 0, math.floor(Player.max_inventory_size / slots_per_row) - 1 do
             current_row = row
-            for slot = 0 , slots_per_row - 1 do
+            for slot = 0, slots_per_row - 1 do
                 local x_pos = start_x + slot * 140
                 local y_pos = start_y + row * 140
                 love.graphics.rectangle("line", x_pos, y_pos, 128, 128)
@@ -242,7 +239,7 @@ function Player.draw_ui()
         current_row = current_row + 1
         local last_slots = Player.max_inventory_size % slots_per_row
         if last_slots > 0 then
-            for slot = 0, last_slots-1 do
+            for slot = 0, last_slots - 1 do
                 local x_pos = start_x + slot * 140
                 local y_pos = start_y + current_row * 140
                 love.graphics.rectangle("line", x_pos, y_pos, 128, 128)
@@ -250,9 +247,9 @@ function Player.draw_ui()
                 --- @type table<Item>
                 local current_item = Player.inventory[current_item_index]
                 if current_item and #current_item > 0 then
-                  local amount = #current_item
-                  local first = current_item[1]
-                  first:draw_as_inventory_item(x_pos, y_pos, amount)
+                    local amount = #current_item
+                    local first = current_item[1]
+                    first:draw_as_inventory_item(x_pos, y_pos, amount)
                 end
 
                 current_item_index = current_item_index + 1
@@ -313,9 +310,9 @@ end
 function Player.place_player_on_random_tile(level)
 
     -- place the player on a random floor tile
-    local player_tile = Player.current_level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
+    local player_tile = Level.current_level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
     while player_tile.kind == 0 do
-      player_tile = Player.current_level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
+        player_tile = Level.current_level.maze[math.random(2, level.WORLD_Y_TILES - 1)][math.random(2, level.WORLD_X_TILES - 1)]
     end
     Player.x = player_tile.x
     Player.y = player_tile.y
@@ -323,3 +320,5 @@ function Player.place_player_on_random_tile(level)
     Player.cam.y = Player.y
 
 end
+
+function Player.save_player_to_file() end

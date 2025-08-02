@@ -1,4 +1,3 @@
-
 --[[
   Maze is used to create a raw outline of a level.
 
@@ -37,10 +36,10 @@ function Maze.generate_a_maze(width, height, maxRooms, roomMinSize, roomMaxSize)
 
     -- Directions for movement (up, down, left, right)
     local directions = {
-      { x = 0, y = -1 }, -- Up
-      { x = 0, y = 1 }, -- Down
-      { x = -1, y = 0 }, -- Left
-      { x = 1, y = 0 }   -- Right
+        { x = 0, y = -1 }, -- Up
+        { x = 0, y = 1 }, -- Down
+        { x = -1, y = 0 }, -- Left
+        { x = 1, y = 0 }   -- Right
     }
 
     -- Helper function to shuffle directions
@@ -53,34 +52,34 @@ function Maze.generate_a_maze(width, height, maxRooms, roomMinSize, roomMaxSize)
 
     -- Room placement function
     local function placeRoom()
-      -- Random size and position
-      local roomWidth = math.random(roomMinSize, roomMaxSize)
-      local roomHeight = math.random(roomMinSize, roomMaxSize)
-      local startX = math.random(1, width - roomWidth - 1)
-      local startY = math.random(1, height - roomHeight - 1)
+        -- Random size and position
+        local roomWidth = math.random(roomMinSize, roomMaxSize)
+        local roomHeight = math.random(roomMinSize, roomMaxSize)
+        local startX = math.random(1, width - roomWidth - 1)
+        local startY = math.random(1, height - roomHeight - 1)
 
-      -- Check if the area is clear
-      for y = startY, startY + roomHeight do
-          for x = startX, startX + roomWidth do
-              if maze[y][x] == 1 then
-                  return false -- Abort if room overlaps with existing path
-              end
-          end
-      end
+        -- Check if the area is clear
+        for y = startY, startY + roomHeight do
+            for x = startX, startX + roomWidth do
+                if maze[y][x] == 1 then
+                    return false -- Abort if room overlaps with existing path
+                end
+            end
+        end
 
-      -- Carve the room into the grid
-      for y = startY, startY + roomHeight do
-          for x = startX, startX + roomWidth do
-              maze[y][x] = 1 -- Room becomes part of the path
-          end
-      end
+        -- Carve the room into the grid
+        for y = startY, startY + roomHeight do
+            for x = startX, startX + roomWidth do
+                maze[y][x] = 1 -- Room becomes part of the path
+            end
+        end
 
-      -- Create an entrance
-      local entranceX = math.random(startX, startX + roomWidth)
-      local entranceY = math.random(startY, startY + roomHeight)
-      maze[entranceY][entranceX] = 1
+        -- Create an entrance
+        local entranceX = math.random(startX, startX + roomWidth)
+        local entranceY = math.random(startY, startY + roomHeight)
+        maze[entranceY][entranceX] = 1
 
-      return true
+        return true
     end
 
     -- Place rooms
@@ -120,19 +119,20 @@ function Maze.generate_a_maze(width, height, maxRooms, roomMinSize, roomMaxSize)
     return maze
 end
 
-
+--------------------------------------------------------------------
 --- Get the four tiles around a given tile.
 --- @param maze table<number, table<number, number>>
 --- @param x number
 --- @param y number
 --- @return table<number>
+--------------------------------------------------------------------
 function Maze.raw_maze_get_four_tiles_around(maze, x, y)
     local tiles = {}
     local directions = {
-      { x = 0, y = -1 },
-      { x = 0, y = 1 },
-      { x = -1, y = 0 },
-      { x = 1, y = 0 },
+        { x = 0, y = -1 },
+        { x = 0, y = 1 },
+        { x = -1, y = 0 },
+        { x = 1, y = 0 },
     }
     for _, dir in ipairs(directions) do
         local tile = maze[y + dir.y] and maze[y + dir.y][x + dir.x]
@@ -143,6 +143,8 @@ function Maze.raw_maze_get_four_tiles_around(maze, x, y)
     return tiles
 end
 
+--------------------------------------------------------------------
+--------------------------------------------------------------------
 function Maze.raw_maze_post_processing(maze, break_through_number)
 
     -- break long maze lines, so we gte more backrooms and less maze
@@ -171,7 +173,7 @@ function Maze.raw_maze_post_processing(maze, break_through_number)
                     end
                 end
             else
-              print("no row at y in maze", y)
+                print("no row at y in maze", y)
             end
         end
     end
@@ -202,7 +204,8 @@ function Maze.raw_maze_post_processing(maze, break_through_number)
 
 end
 
-
+--------------------------------------------------------------------
+--------------------------------------------------------------------
 function Maze.export_raw_maze_to_csv(file_name, maze)
     local file = io.open(file_name, "w")
     for y, row in ipairs(maze) do
@@ -217,6 +220,8 @@ function Maze.export_raw_maze_to_csv(file_name, maze)
     file:close()
 end
 
+--------------------------------------------------------------------
+--------------------------------------------------------------------
 function Maze.export_raw_maze_as_png(file_name, maze)
     local world_y_tiles = #maze
     local world_x_tiles = #maze[1]
@@ -233,6 +238,8 @@ function Maze.export_raw_maze_as_png(file_name, maze)
     --print("Saved maze to " .. saveDir .. "/" .. file_name)
 end
 
+--------------------------------------------------------------------
+--------------------------------------------------------------------
 function Maze.import_raw_maze_from_csv(file_name)
     local file = io.open(file_name, "r")
     local maze = {}

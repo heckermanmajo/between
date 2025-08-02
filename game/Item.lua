@@ -1,7 +1,9 @@
+------------------------------------------------------------------------------
 --- Item class: Items are objects that can be picked up by the player.
 --- Items can be health items, sanity items, weapons, ammo, etc.
 --- Items can be placed on the level and picked up by the player(then added to the inventory).
 --- @class Item
+------------------------------------------------------------------------------
 Item = {
     MAX_STACK_SIZE_PER_KIND = {
         can = 1,
@@ -26,6 +28,8 @@ Item = {
 }
 Item.__index = Item
 
+------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 function Item.new(x, y, kind, level)
     local self = setmetatable({}, Item)
     self.x = x
@@ -48,14 +52,18 @@ function Item.new(x, y, kind, level)
     return self
 end
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 function Item.draw_all_items()
     for _, item in ipairs(Item.instances) do
-        if Player.current_level:get_tile_at(item.x, item.y).visible then
+        if Level.current_level:get_tile_at(item.x, item.y).visible then
             love.graphics.draw(item.texture, item.x - item.texture:getWidth() / 2, item.y - item.texture:getHeight() / 2)
         end
     end
 end
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 function Item:draw()
     local scale = 1
     if self.kind == "shotgun" then
@@ -64,11 +72,13 @@ function Item:draw()
     if self.kind == "mp5" then
         scale = 0.6
     end
-    if Player.current_level:get_tile_at(self.x, self.y).visible then
+    if Level.current_level:get_tile_at(self.x, self.y).visible then
         love.graphics.draw(self.texture, self.x - self.texture:getWidth() / 2, self.y - self.texture:getHeight() / 2, 0, scale, scale)
     end
 end
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 function Item.place_item_on_random_floor_tile(kind, level)
     local item_tile = level:get_tile_at(math.random(2, level.WORLD_Y_TILES - 1) * level.TILE_SIZE, math.random(2, level.WORLD_X_TILES - 1) * level.TILE_SIZE)
     while item_tile.kind == 0 do
@@ -79,10 +89,14 @@ function Item.place_item_on_random_floor_tile(kind, level)
     Item.new(x, y, kind, level)
 end
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 function Item:to_csv_string()
     return self.x .. "," .. self.y .. "," .. self.kind .. "\n"
 end
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 function Item.from_csv_line(line, level)
     if line == "" then return nil end
     local parts = split(line, ",")
@@ -94,6 +108,8 @@ end
 
 local currently_selected_item = nil
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 function Item:draw_as_inventory_item(x_pos, y_pos, amount)
     -- 128 * 128: scale my texture up to 128x128
     -- gray background
@@ -144,12 +160,18 @@ function Item:draw_as_inventory_item(x_pos, y_pos, amount)
     end
 end
 
+------------------------------------------------------------------------------
+---
+------------------------------------------------------------------------------
 local cooldown = 0
 function Item.progress_cooldown(dt)
     if cooldown > 0 then cooldown = cooldown - dt end
 end
 
--- todo: add function for drawing the interaction buttons on the left hand side of the inventory-screen
+--- todo: add function for drawing the interaction buttons on the left hand side of the inventory-screen
+------------------------------------------------------------------------------
+---
+------------------------------------------------------------------------------
 function Item:draw_interaction_buttons()
 
     -- todo: add drop buttons for all items
@@ -235,12 +257,12 @@ function Item:draw_interaction_buttons()
             if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
                 if love.mouse.isDown(1) and cooldown <= 0 then
                     -- drop the item
-                    self:add_to_level(Player.x, Player.y, Player.current_level)
+                    self:add_to_level(Player.x, Player.y, Level.current_level)
                     -- remove the item from the inventory
                     for i, item_row in ipairs(Player.inventory) do
                         if item_row[1].kind == self.kind then
                             table.remove(Player.inventory, i)
-                            if Player.weapon_in_hand.kind == "handgun" then Player.weapon_in_hand = nil end
+                            if Player.weapon_in_hand and Player.weapon_in_hand.kind == "handgun" then Player.weapon_in_hand = nil end
                             break
                         end
                     end
@@ -290,12 +312,12 @@ function Item:draw_interaction_buttons()
             if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
                 if love.mouse.isDown(1) and cooldown <= 0 then
                     -- drop the item
-                    self:add_to_level(Player.x, Player.y, Player.current_level)
+                    self:add_to_level(Player.x, Player.y, Level.current_level)
                     -- remove the item from the inventory
                     for i, item_row in ipairs(Player.inventory) do
                         if item_row[1].kind == self.kind then
                             table.remove(Player.inventory, i)
-                            if Player.weapon_in_hand.kind == "shotgun" then Player.weapon_in_hand = nil end
+                            if Player.weapon_in_hand and Player.weapon_in_hand.kind == "shotgun" then Player.weapon_in_hand = nil end
                             break
                         end
                     end
@@ -345,12 +367,12 @@ function Item:draw_interaction_buttons()
             if mouse_x > x_pos and mouse_x < x_pos + width and mouse_y > y_pos and mouse_y < y_pos + height then
                 if love.mouse.isDown(1) and cooldown <= 0 then
                     -- drop the item
-                    self:add_to_level(Player.x, Player.y, Player.current_level)
+                    self:add_to_level(Player.x, Player.y, Level.current_level)
                     -- remove the item from the inventory
                     for i, item_row in ipairs(Player.inventory) do
                         if item_row[1].kind == self.kind then
                             table.remove(Player.inventory, i)
-                            if Player.weapon_in_hand.kind == "mp5" then Player.weapon_in_hand = nil end
+                            if Player.weapon_in_hand and Player.weapon_in_hand.kind == "mp5" then Player.weapon_in_hand = nil end
                             break
                         end
                     end
@@ -371,15 +393,21 @@ function Item:draw_interaction_buttons()
 
 end
 
+------------------------------------------------------------------------------
+---
+------------------------------------------------------------------------------
 function Item:remove_from_level()
-    for i, item in ipairs(Player.current_level.items) do
+    for i, item in ipairs(Level.current_level.items) do
         if item == self then
-            table.remove(Player.current_level.items, i)
+            table.remove(Level.current_level.items, i)
             return
         end
     end
 end
 
+------------------------------------------------------------------------------
+---
+------------------------------------------------------------------------------
 function Item:add_to_level(x, y, level)
     self.x = x
     self.y = y
@@ -393,6 +421,7 @@ end
 --- If the item is not ammo, it will be added to a new stack.
 --- If the inventory is full, the item will not be added.
 --- The item will be removed from the level after being added to the inventory.
+------------------------------------------------------------------------------
 function Item:add_to_player_inventory()
 
     --- Helper function to handle adding ammo to inventory

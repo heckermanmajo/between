@@ -1,8 +1,14 @@
 -- todo: IF WE WANT TO SHOOT: look into the inventory for ammo and if we dont have it then dont shoot(empty clicking sound)
 -- todo: IF WE SHOOT TAKE ONE SHELL FROM THE INVENTORY
 
-
-ShootingWeapon = {}
+--- @class ShootingWeapon
+ShootingWeapon = {
+    weapon_types = {
+        handgun = { damage = 10, shoot_cooldown_time = 1, ammo_kind = "ammo_9mm" },
+        shotgun = { damage = 40, shoot_cooldown_time = 2, ammo_kind = "ammo_12mm" },
+        mp5 = { damage = 20, shoot_cooldown_time = 0.3, ammo_kind = "ammo_10mm" }
+    }
+}
 ShootingWeapon.__index = ShootingWeapon
 
 function ShootingWeapon.new(weapon_kind, from_item)
@@ -14,18 +20,6 @@ function ShootingWeapon.new(weapon_kind, from_item)
     self.max_range = 500
     self.kind = weapon_kind
     self.from_item = from_item
-
-    if weapon_kind == "handgun" then
-        self.damage = 10
-        self.shoot_cooldown_time = 1
-    elseif weapon_kind == "shotgun" then
-        self.damage = 40
-        self.shoot_cooldown_time = 2
-    elseif weapon_kind == "mp5" then
-        self.damage = 20
-        self.shoot_cooldown_time = 0.3
-    end
-
     return self
 end
 
@@ -43,36 +37,13 @@ function ShootingWeapon:handle_attack(dt)
         -- todo: the hit target needs to be in a clean line of sight bresham line algorithm
 
         local has_ammo = false
-        if self.kind == "handgun" then
-            for _, item_row in ipairs(Player.inventory) do
-                if item_row[1].kind == "ammo_9mm" then
-                    has_ammo = true
-                    table.remove(item_row, 1)
-                    break
-                end
+        for _, item_row in ipairs(Player.inventory) do
+            if item_row[1].kind == ShootingWeapon.weapon_types[self.kind].ammo_kind then
+                has_ammo = true
+                table.remove(item_row, 1)
+                break
             end
         end
-
-        if self.kind == "shotgun" then
-            for _, item_row in ipairs(Player.inventory) do
-                if item_row[1].kind == "ammo_12mm" then
-                    has_ammo = true
-                    table.remove(item_row, 1)
-                    break
-                end
-            end
-        end
-
-        if self.kind == "mp5" then
-            for _, item_row in ipairs(Player.inventory) do
-                if item_row[1].kind == "ammo_10mm" then
-                    has_ammo = true
-                    table.remove(item_row, 1)
-                    break
-                end
-            end
-        end
-
         if not has_ammo then
             --todo: Sounds.empty_click:play()
             return
@@ -81,23 +52,16 @@ function ShootingWeapon:handle_attack(dt)
         Sounds.shot:play()
         self.shoot_effect_cooldown = 0.03
         self.hit_effect_cooldown = 0.05
-        self.shoot_cooldown = self.shoot_cooldown_time
+        self.shoot_cooldown = ShootingWeapon.weapon_types[self.kind].shoot_cooldown_time
         local hitx, hity = Player.cam:transform_screen_xy_to_world_xy(love.mouse.getX(), love.mouse.getY())
-        self.hit_target = {
-            x = hitx,
-            y = hity
-        }
+        self.hit_target = { x = hitx, y = hity }
         local hit_monster = Monster.point_hit_monster(self.hit_target.x, self.hit_target.y)
         if hit_monster then
-            hit_monster:take_damage(self.damage)
-            print("hit monster")
-            print("Created blood at " .. hit_monster.x .. " " .. hit_monster.y)
-            -- todo: very bad global variable LEVEL
-            Sprite.new(hit_monster.x, hit_monster.y, "claimed_blood", 1, 1, LEVEL)
+            hit_monster:take_damage(ShootingWeapon.weapon_types[self.kind].damage)
+            print("hit monster & Created blood at " .. hit_monster.x .. " " .. hit_monster.y)
+            Sprite.new(hit_monster.x, hit_monster.y, "claimed_blood", 1, 1, Level.current_level)
         end
-
     end
-
 end
 
 function ShootingWeapon:draw()
@@ -122,7 +86,7 @@ function ShootingWeapon:draw()
             -- scale_one = -scale
         end
         love.graphics.rotate(math.rad(degrees))
-        love.graphics.draw(Textures.handgun,x ,y, 0, scale_one, scale_two)
+        love.graphics.draw(Textures.handgun, x, y, 0, scale_one, scale_two)
 
         if self.shoot_effect_cooldown > 0 then
             love.graphics.draw(Textures.shooting_fire, -Textures.player:getWidth() / 2 + 20, -Textures.player:getHeight() / 2 - 20)  -- Draw the player centered
@@ -171,8 +135,6 @@ function ShootingWeapon:draw()
         love.graphics.pop()
 
     elseif Player.weapon_in_hand.kind == "mp5" then
-
-        -- 32 * 64 px
         love.graphics.push()
         love.graphics.translate(Player.x, Player.y)
         love.graphics.rotate(Player.rotation + math.pi / 2)  -- Rotate the player
