@@ -113,115 +113,31 @@ function Level.new(size_in_tiles, max_rooms, room_min_size, room_max_size)
 
     --- Add a random doorway to the level.
     local function add_random_doorway()
-
         local random_tile = self:get_random_floor_tile()
         random_tile.is_doorway = true
         random_tile.doorway_to = "" -- setting this to "" makes it generate a new level
-
     end
 
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-    add_random_doorway()
-
+    for i = 0, 20 do add_random_doorway() end
     Level.current_level = self
-
     self.WORLD_X_PIXELS = size_in_tiles * Level.TILE_SIZE
     self.WORLD_Y_PIXELS = size_in_tiles * Level.TILE_SIZE
-
     self.objects = {}
     self.sprites = {}
     self.monsters = {}
     self.items = {}
 
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-    Monster.new(nil, nil, self)
-
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-    Item.place_item_on_random_floor_tile("can", self)
-
-    for i = 1, 20 do
-        Item.place_item_on_random_floor_tile("ammo_9mm", self)
-    end
-
-    for i = 1, 20 do
-        Item.place_item_on_random_floor_tile("ammo_10mm", self)
-    end
-
-    for i = 1, 20 do
-        Item.place_item_on_random_floor_tile("ammo_12mm", self)
-    end
-
-    for i = 1, 20 do
-        Item.place_item_on_random_floor_tile("handgun", self)
-    end
-
-    for i = 1, 20 do
-        Item.place_item_on_random_floor_tile("shotgun", self)
-    end
-
-    for i = 1, 20 do
-        Item.place_item_on_random_floor_tile("mp5", self)
-    end
+    for i = 0, 10 do Monster.new(nil, nil, self) end
+    for i = 1, 30 do Item.place_item_on_random_floor_tile("can", self) end
+    for i = 1, 20 do Item.place_item_on_random_floor_tile("ammo_9mm", self) end
+    for i = 1, 20 do Item.place_item_on_random_floor_tile("ammo_10mm", self) end
+    for i = 1, 20 do Item.place_item_on_random_floor_tile("ammo_12mm", self) end
+    for i = 1, 20 do Item.place_item_on_random_floor_tile("handgun", self) end
+    for i = 1, 20 do Item.place_item_on_random_floor_tile("shotgun", self) end
+    for i = 1, 20 do Item.place_item_on_random_floor_tile("mp5", self) end
     Player.place_player_on_random_tile(self) -- level is also state of the player
-
     return self
-end -- new
+end
 
 -----------------------------------------------------------------------------
 --- Update the level. Also updates the player since the player is part of the
@@ -316,10 +232,8 @@ function Level:draw(mode)
         love.mouse.setCursor(Textures.crosshair_cursor, 7, 7)
     end
     if mode == editor then
-        --region drawEDITOR
         -- todo
     else
-        --region drawGAME
         Player.cam:attach()
 
         for y, row in ipairs(self.maze) do

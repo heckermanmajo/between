@@ -169,15 +169,11 @@ end
 --- Handles movement based on WASD keys
 --- @param dt number Delta time
 function Camera:apply_wasd_movement(dt)
-    --- @type number
     local speed = 1000
     if love.keyboard.isDown("w") then self.y = math.floor(self.y - speed * dt) end
     if love.keyboard.isDown("a") then self.x = math.floor(self.x - speed * dt) end
     if love.keyboard.isDown("s") then self.y = math.floor(self.y + speed * dt) end
     if love.keyboard.isDown("d") then self.x = math.floor(self.x + speed * dt) end
-
-    -- Rotate camera on R key
-    if love.keyboard.isDown("r") then self.rotation = self.rotation + 1 * dt end
 end
 
 --- Transforms screen coordinates to screen coordinates

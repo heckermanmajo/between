@@ -26,6 +26,7 @@ function Level.from_file(level_name, load_path)
     local path = load_path .. "/" .. level_name
 
     local file = io.open(path, "r")
+    if not file then print("Could not read " .. path) end
     local content = file:read("*all")
 
     -- split on seperators "####################################"

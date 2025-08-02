@@ -97,10 +97,11 @@ function Cell:use_this_doorway()
 
     if level_name == "" then
 
-        --local new_level = Level.new(30, 12, 2, 5)
-        local new_level = Level.new_level_from_templates()
 
+        local new_level = Level.new_level_from_templates()
         self.doorway_to = new_level.id
+        Level.current_level:save_to_file()
+        Level.current_level = new_level
 
         local door = new_level:get_undefined_door_cell()
         if door then
@@ -111,7 +112,7 @@ function Cell:use_this_doorway()
             Player.cam.x = door.x
             Player.cam.y = door.y
         end
-        Level.current_level:save_to_file()
+
     else
         Level.current_level:save_to_file()
         Level.current_level = Level.from_file(level_name)

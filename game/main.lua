@@ -85,7 +85,6 @@ require "Level"
 require "Cell"
 require "Player"
 require "Menu"
-
 require "load_and_save_level"
 require "player_editor_mode"
 
