@@ -14,28 +14,23 @@ Camera.__index = Camera
 --- @param rotation number Initial rotation angle
 --- @return Camera
 function Camera.new(x, y, zoom, rotation)
-
     x = x or 0
     y = y or 0
     zoom = zoom or 1
     rotation = rotation or 0
-
     assert(type(x) == "number", "x must be a number")
     assert(type(y) == "number", "y must be a number")
     assert(type(zoom) == "number" and zoom > 0, "zoom must be a positive number")
     assert(type(rotation) == "number", "rotation must be a number")
-
     local self = setmetatable({}, Camera)
     self.x = x
     self.y = y
     self.zoom = zoom
     self.rotation = rotation
     self.minimap = false
-
     self.isDragging = false
     self.dragStartX = 0
     self.dragStartY = 0
-
     return self
 end
 
@@ -45,7 +40,6 @@ end
 function Camera:move(dx, dy)
     assert(type(dx) == "number", "dx must be a number")
     assert(type(dy) == "number", "dy must be a number")
-
     self.x = math.floor(self.x + dx)
     self.y = math.floor(self.y + dy)
 end
@@ -187,3 +181,4 @@ function Camera:transform_screen_xy_to_world_xy(screen_x, screen_y)
     local world_y = (screen_y - love.graphics.getHeight() / 2) / self.zoom + self.y
     return world_x, world_y
 end
+

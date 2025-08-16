@@ -150,7 +150,6 @@ Sounds = {
 --- @param dt number
 ----------------------------------------------
 function love.load()
-
     FileFunctions.initSaveFolder()
     love.graphics.setNewFont(12)
     music = love.audio.newSource("background.wav", "stream") -- the "stream" tells LÖVE to stream the file from disk, good for longer music track
@@ -159,7 +158,6 @@ function love.load()
     music:setVolume(0.1)
     music:play()
     music:setLooping(true) -- loop the music
-
 end
 
 local key_cool_down = 0.5

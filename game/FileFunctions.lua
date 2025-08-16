@@ -1,3 +1,5 @@
+-- https://love2d-community.github.io/love-api/#filesystem
+
 ------------------------------------------------------------------------------
 ---
 ------------------------------------------------------------------------------
@@ -35,35 +37,92 @@ end
 ------------------------------------------------------------------------------
 ---
 ------------------------------------------------------------------------------
-function FileFunctions.initSaveFolder()
-    local saveDir = "save"
+function FileFunctions.getSaveFolderName() return "save" end
+
+
+function FileFunctions.createSafeFolderIfNotExists()    
+    local saveDir = FileFunctions.getSaveFolderName()
     if not love.filesystem.getInfo(saveDir) then
         love.filesystem.createDirectory(saveDir)
-    end
+    end 
+end
+
+------------------------------------------------------------------------------
+---
+------------------------------------------------------------------------------
+
+function FileFunctions.initSaveFolder()
+    FileFunctions.createSafeFolderIfNotExists()
     print("Save directory (real path):", love.filesystem.getSaveDirectory())
 end
 
 ------------------------------------------------------------------------------
 ---
 ------------------------------------------------------------------------------
-function FileFunctions.deleteAllSavegames() end
+function FileFunctions.deleteAllSavegames() 
+    FileFunctions.createSafeFolderIfNotExists()
+    local saveDir = FileFunctions.getSaveFolderName()
+    local files = love.filesystem.getDirectoryItems(saveDir)
+    for k, file in ipairs(files) do
+        success = love.filesystem.remove( name )
+        if not success then 
+            error("Could not delete " .. name)
+        end
+    end 
+end
 
 ------------------------------------------------------------------------------
 ---
 ------------------------------------------------------------------------------
-function FileFunctions.setRawSaveGameFileContentLevel(content, name) end
+function FileFunctions.getAllSafeGameFileNames() 
+    FileFunctions.createSafeFolderIfNotExists()
+    local saveDir = FileFunctions.getSaveFolderName()
+    local files = love.filesystem.getDirectoryItems(saveDir)
+    return files
+end
 
 ------------------------------------------------------------------------------
 ---
 ------------------------------------------------------------------------------
-function FileFunctions.getRawSaveGameFileContentLevel(name) end
+function FileFunctions.setRawSaveGameFileContentLevel( content, name, overwrite )
+    local saveDir = FileFunctions.getSaveFolderName()
+    local path = saveDir .. "/" .. name
+    success, message = love.filesystem.write( path, content )
+    if not success then
+        error ( message )
+    end
+end
 
 ------------------------------------------------------------------------------
 ---
 ------------------------------------------------------------------------------
-function FileFunctions.setRawSaveGameFileContentPlayer(content) end
+function FileFunctions.getRawSaveGameFileContentLevel( name )
+    local saveDir = FileFunctions.getSaveFolderName()
+    local path = saveDir .. "/" .. name
+    contents, size, contents, errorMsg = love.filesystem.read( path )
+    if content == nil then 
+        if errorMsg then 
+            error( errorMsg )
+        else 
+            error( path .. " could not be read - nil but no error" )
+        end
+    end
+
+end
+------------------------------------------------------------------------------
+---
+------------------------------------------------------------------------------
+function FileFunctions.setRawSaveGameFileContentPlayer( content )
+
+end
 
 ------------------------------------------------------------------------------
 ---
 ------------------------------------------------------------------------------
 function FileFunctions.getRawSaveGameFileContentPlayer() end
+
+function FileFunctions.getLevelTemplates() end
+
+function FileFunctions.getMapsItems() end
+function FileFunctions.getMapImage() end
+--function FileFunctions

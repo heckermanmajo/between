@@ -95,10 +95,16 @@ function Menu.MainMenu()
         love.graphics.print("Between: V 0.1", 10, y); y = y + 20
         love.graphics.print("Save-Files:  "..love.filesystem.getSaveDirectory(), 10, y);y = y +  20
         love.graphics.print("Source-Files:  "..love.filesystem.getSourceBaseDirectory(), 10, y);y = y +  20
+        love.graphics.print("User-directory:  "..love.filesystem.getUserDirectory(), 10, y);y = y +  20
         local major, minor, revision, codename = love.getVersion()
         local str = string.format("Version %d.%d.%d - %s", major, minor, revision, codename)
         love.graphics.print("LOVE:  "..str, 10, y);y = y +  20
         love.graphics.print("Web:  between.info", 10, y);y = y +  20
+        local saveFileNames = FileFunctions.getAllSafeGameFileNames()
+        love.graphics.print("SaveFiles: " .. tostring(#saveFileNames), 10, y);y = y +  20
+        for name, file in ipairs(saveFileNames) do 
+            love.graphics.print("[SAVE-FILE]: "..file, 10, y);y = y +  20
+        end
     end
 
     -- end on escape
